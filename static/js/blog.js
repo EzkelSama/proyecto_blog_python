@@ -1,9 +1,4 @@
 
-// The x-www-form-urlencoded is used more generally to send
-// text data to the server
-// while multipart/form-data is used to send binary data,
-// most notably for uploading files to the server.
-
 const username = localStorage.blogUsername? localStorage.blogUsername : ""
 
 if(username == "") {
@@ -23,11 +18,10 @@ document.querySelector("#publicar").onclick = async () => {
     const texto = document.querySelector("#texto").value;
     const url = document.querySelector("#publicar").getAttribute("path");
     
-    formData.append("username", username);
     formData.append("titulo", titulo);
     formData.append("texto", texto);
     
-    fetch(url, {
+    fetch(`${url}/${username}`, {
         method: 'POST',
         body: formData,
     })
@@ -38,17 +32,9 @@ document.querySelector("#publicar").onclick = async () => {
 
 const url = document.querySelector("#publicar").getAttribute("path");
 
-const params = { 
-    username: username,
-};
-// this line takes the params object and builds the query string
-const query = Object.keys(params)
-             .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
-             .join('&');
-
-fetch(url + "?" + query)
+fetch(`${url}/${username}`)
     .then(response => response.json())
-    .then(data => data.posts)
+    .then(data => data)
     .then(posts => {
         let accumulator = ""
         
