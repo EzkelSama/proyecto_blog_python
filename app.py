@@ -27,25 +27,23 @@ def login():
 
 
 # Endpoint para obtener los últimos tres posteos de un usuario
-@app.route('/posteos/<usuario>', methods=['GET'])
-def obtener_posteos(usuario):
-    posteos = Posteo.query.filter_by(usuario=usuario).order_by(Posteo.id.desc()).limit(3).all()
-    datos = []
-    for posteo in posteos:
-        datos.append({'titulo': posteo.titulo, 'texto': posteo.texto})
-    return jsonify(datos)
-
-
-# Endpoint para crear un nuevo posteo
-@app.route('/posteos', methods=['POST'])
-def crear_posteo():
-    usuario = request.form['usuario']
-    titulo = request.form['titulo']
-    texto = request.form['texto']
-    posteo = Posteo(usuario=usuario, titulo=titulo, texto=texto)
-    db.session.add(posteo)
-    db.session.commit()
-    return Response(status=201)
+@app.route('/posteos/', methods=['GET', 'POST'])
+def posteos():
+    if request.method == 'GET':
+        usuario = request.args.get('usuario')
+        posteos = Posteo.query.filter_by(usuario=usuario).order_by(Posteo.id.desc()).limit(3).all()
+        datos = []
+        for posteo in posteos:
+            datos.append({'titulo': posteo.titulo, 'texto': posteo.texto})
+        return jsonify(datos)
+    elif request.method == 'POST':
+        usuario = request.form['usuario']
+        titulo = request.form['titulo']
+        texto = request.form['texto']
+        posteo = Posteo(usuario=usuario, titulo=titulo, texto=texto)
+        db.session.add(posteo)
+        db.session.commit()
+        return Response(status=201)
 
 
 # Endpoint para eliminar todos los posteos de un usuario
